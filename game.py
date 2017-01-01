@@ -94,7 +94,7 @@ def playAndTrainGame():
 def startTrain():
     i = 0
     while (True):
-        if (i > 0 and i % 500000 == 0):
+        if (i > 0 and i % 10000 == 0):
             drawDragram()
         playAndTrainGame()
         i = i + 1
@@ -110,14 +110,17 @@ def drawDragram():
         deal_first_card = int(key_arr[1])
         total_reward = 0
         total_count = 0
-        for action in actions:
-            total_reward = total_reward + Q(current_sum, deal_first_card, action) * N_action(current_sum, deal_first_card, action)
-            total_count = total_count + N_action(current_sum, deal_first_card, action)
-        mean_win_rate = float(total_reward) / total_count
+        action = Q_star_action(current_sum, deal_first_card)
+        max_win_rate = Q_table[key][action]
+        # for action in actions:
+        #     total_reward = total_reward + Q(current_sum, deal_first_card, action) * N_action(current_sum, deal_first_card, action)
+        #     total_count = total_count + N_action(current_sum, deal_first_card, action)
+        # mean_win_rate = float(total_reward) / total_count
         if current_sum >= 11:
             x.append(deal_first_card)
             y.append(current_sum)
-            z.append(mean_win_rate)
+            z.append(max_win_rate)
+            # z.append(mean_win_rate)
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     ax.scatter(x, y, z, label='win rate dispatch')
