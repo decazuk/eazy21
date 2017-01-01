@@ -15,7 +15,10 @@ Q_table = {}
 def N_action(current_sum, deal_first_card, action):
     key = buildTableKey(current_sum, deal_first_card)
     if key in N_table:
-        return N_table[key][action]
+        if action in N_table[key]:
+            return N_table[key][action]
+        else:
+            return 0
     else:
         return 0
 def N(current_sum, deal_first_card):
@@ -35,7 +38,7 @@ def Q(current_sum, deal_first_card, action):
         if action in Q_table[key]:
             return Q_table[key][action]
         else:
-          0
+          return 0
     else:
         return 0
 
@@ -88,13 +91,13 @@ def playAndTrainGame():
             action = Q_star_action(current_sum, deal_first_card)
 
         current_sum_prime, deal_first_card, terminal, reward = step(current_sum, deal_first_card, action)
-        update_table(current_sum_prime, deal_first_card, action, reward)
+        update_table(current_sum, deal_first_card, action, reward)
         current_sum = current_sum_prime
 
 def startTrain():
     i = 0
     while (True):
-        if (i > 0 && i % 1000 == 0):
+        if (i > 0 and i % 10000 == 0):
             drawDragram()
         playAndTrainGame()
         i = i + 1
@@ -106,8 +109,8 @@ def drawDragram():
     keys = list(Q_table)
     for key in keys:
         key_arr = key.split(",")
-        current_sum = key_arr[0]
-        deal_first_card = key_arr[1]
+        current_sum = int(key_arr[0])
+        deal_first_card = int(key_arr[1])
         total_reward = 0
         total_count = 0
         for action in actions:
@@ -119,7 +122,7 @@ def drawDragram():
         z.append(mean_win_rate)
     fig = plt.figure()
     ax = fig.gca(projection='3d')
-    ax.plot(x, y, z, label='win rate dispatch')
+    ax.scatter(x, y, z, label='win rate dispatch')
     ax.legend()
 
     plt.show()
