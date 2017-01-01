@@ -1,7 +1,8 @@
 from easy21_env import *
+import numpy as np
 
-current_sum, deal_first_card, terminal, reward = initGame()
-current_sum, deal_first_card, terminal, reward = step(current_sum, deal_first_card, "hit")
+# current_sum, deal_first_card, terminal, reward = initGame()
+# current_sum, deal_first_card, terminal, reward = step(current_sum, deal_first_card, "hit")
 
 actions = ["stick", "hit"]
 
@@ -50,20 +51,49 @@ def Q_star_action(current_sum, deal_first_card):
         return ""
 
 def update_table(current_sum, deal_first_card, action, reward):
-    key = buildTableKey(current_sum, deal_first_card, action)
+    key = buildTableKey(current_sum, deal_first_card)
     if key in N_table:
-        original_count = N_table[key]
-        N_table[key] = original_count + 1
-        # use mean value 
-        Q_table[key] = (Q_table[key] * original_count + reward) / (original_count + 1)
+        if action in N_table[key]:
+            original_count = N_table[key][action]
+            N_table[key][action] = original_count + 1    
+            # use mean value 
+            Q_table[key][action] = (Q_table[key][action] * original_count + reward) / (original_count + 1)
+        else:
+            N_table[key][action] = 1
+            Q_table[key][action] = reward
     else:
-        N_table[key] = 1
-        Q_table[key] = reward
+        N_table[key] = {}
+        Q_table[key] = {}
+        N_table[key][action] = 1
+        Q_table[key][action] = reward
 
 
 def buildTableKey(current_sum, deal_first_card):
     return "{},{}".format(current_sum, deal_first_card)
 
-def random_rate(current_sum, deal_first_card):
+def choose_random_action(current_sum, deal_first_card):
     N0 = 100
-    return float(N0) / (N0 + N(current_sum, deal_first_card))
+    random_rate = float(N0) / (N0 + N(current_sum, deal_first_card))
+    return (1 - random_rate) <= np.random.uniform(0, 1)
+
+def playAndTrainGame():
+    current_sum, deal_first_card, terminal, reward = initGame()
+    while (not terminal):
+        if choose_random_action(current_sum, deal_first_card):
+            action = actions[random.randint(0, 1)]
+        else:
+            action = Q_star_action(current_sum, deal_first_card)
+
+        current_sum_prime, deal_first_card, terminal, reward = step(current_sum, deal_first_card, action)
+        update_table(current_sum_prime, deal_first_card, action, reward)
+        current_sum = current_sum_prime
+
+def startTrain():
+    while (True):
+        playAndTrainGame()
+
+def drawDragram():
+     
+
+
+
