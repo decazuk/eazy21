@@ -1,5 +1,8 @@
 from easy21_env import *
 import numpy as np
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 # current_sum, deal_first_card, terminal, reward = initGame()
 # current_sum, deal_first_card, terminal, reward = step(current_sum, deal_first_card, "hit")
@@ -89,11 +92,37 @@ def playAndTrainGame():
         current_sum = current_sum_prime
 
 def startTrain():
+    i = 0
     while (True):
+        if (i > 0 && i % 1000 == 0):
+            drawDragram()
         playAndTrainGame()
+        i = i + 1
 
 def drawDragram():
-     
+    x = []
+    y = []
+    z = []
+    keys = list(Q_table)
+    for key in keys:
+        key_arr = key.split(",")
+        current_sum = key_arr[0]
+        deal_first_card = key_arr[1]
+        total_reward = 0
+        total_count = 0
+        for action in actions:
+            total_reward = total_reward + Q(current_sum, deal_first_card, action) * N_action(current_sum, deal_first_card, action)
+            total_count = total_count + N_action(current_sum, deal_first_card, action)
+        mean_win_rate = float(total_reward) / total_count
+        x.append(deal_first_card)
+        y.append(current_sum)
+        z.append(mean_win_rate)
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.plot(x, y, z, label='win rate dispatch')
+    ax.legend()
 
+    plt.show()
 
+startTrain()
 
