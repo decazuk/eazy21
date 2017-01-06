@@ -78,15 +78,18 @@ def choose_random_action(current_sum, deal_first_card):
     N0 = 100
     random_rate = float(N0) / (N0 + N(current_sum, deal_first_card))
     return (1 - random_rate) <= np.random.uniform(0, 1)
+def take_action(current_sum, deal_first_card):
+    action = ""
+    if choose_random_action(current_sum, deal_first_card):
+        action = actions[random.randint(0, 1)]
+    else:
+        action = Q_star_action(current_sum, deal_first_card)
+    return action
 
 def playAndTrainGame():
     current_sum, deal_first_card, terminal, reward = initGame()
     while (not terminal):
-        if choose_random_action(current_sum, deal_first_card):
-            action = actions[random.randint(0, 1)]
-        else:
-            action = Q_star_action(current_sum, deal_first_card)
-
+        action = take_action(current_sum, deal_first_card)
         current_sum_prime, deal_first_card, terminal, reward = step(current_sum, deal_first_card, action)
         update_table(current_sum, deal_first_card, action, reward)
         current_sum = current_sum_prime
