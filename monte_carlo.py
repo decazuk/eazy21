@@ -1,4 +1,4 @@
-from easy21_env import *
+from easy21env import *
 import numpy as np
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
@@ -37,13 +37,14 @@ class MonteCarloControl(object):
         return np.amax(self.q_table[state])
 
 def easy21_with_monte_carlo():
-    learner = MonteCarloControl(num_states = nS(), num_actions = nA())
+    env = Easy21Env()
+    learner = MonteCarloControl(num_states = env.number_states, num_actions = env.number_actions)
     learner.reset_tables()
     def play_and_train_game():    
-        state, terminal, reward = initGame()
+        state, terminal, reward = env.init_game()
         while(not terminal):
-            action = learner.choose_action(state, actionSpace())
-            state_prime, terminal, reward = step(state, action)
+            action = learner.choose_action(state, env.action_space)
+            state_prime, terminal, reward = env.step(state, action)
             learner.update_table(state, action, reward)
             state = state_prime
     def draw_dragram():
@@ -51,7 +52,7 @@ def easy21_with_monte_carlo():
         y = []
         z = []
         for s in range(learner.num_states):
-            current_sum, deal_first_card = cardForState(s)
+            current_sum, deal_first_card = env.card_for_state(s)
             if current_sum >= 11:
                 x.append(deal_first_card)
                 y.append(current_sum)
