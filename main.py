@@ -85,26 +85,27 @@ def easy21_with_sara_lambda():
         e_table = {}
         for s in range(env.number_states):
             e_table[s] = np.zeros(env.number_actions)
-        discount_rate = 0.8
-        alpha = 0.9
+        gamma = 1.0
         state, terminal, reward = env.init_game()
         action = learner.choose_action(state, env.action_space)
         while(not terminal):
             state_prime, terminal, reward = env.step(state, action)
-            action_prime = learner.choose_greedy_action(state_prime, env.action_space)
-            error = reward + discount_rate * learner.win_rate(state_prime, action_prime) - learner.win_rate(state, action)
+            learner.n_table[state] += 1
+            action_prime = learner.choose_action(state_prime, env.action_space)
+            delta = reward + gamma * learner.win_rate(state_prime, action_prime) - learner.win_rate(state, action)
             e_table[state][action] = e_table[state][action] + 1
             for s in range(env.number_states):
                 for a in range(env.number_actions):
-                    learner.q_table[s][a] = learner.q_table[s][a] + alpha * error * e_table[s][a]
-                    e_table[s][a] = discount_rate * lamda * e_table[s][a]
+                    alpha = 1.0 / learner.n_table[s] if learner.n_table[s] != 0 else 0
+                    learner.q_table[s][a] += alpha * delta * e_table[s][a]
+                    e_table[s][a] = gamma * lamda * e_table[s][a]
             state = state_prime
             action = action_prime
     i = 0
     while(True):
         if (i > 0 and i % 10000 == 0):
             draw_dragram(learner, env)
-        play_and_train_game(1)
+        play_and_train_game(0.1)
         i = i + 1
 
 
