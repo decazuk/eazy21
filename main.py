@@ -91,16 +91,21 @@ def easy21_with_sara_lambda():
         while(not terminal):
             state_prime, terminal, reward = env.step(state, action)
             learner.n_table[state] += 1
-            action_prime = learner.choose_action(state_prime, env.action_space)
-            delta = reward + gamma * learner.win_rate(state_prime, action_prime) - learner.win_rate(state, action)
+            delta = 0.0
+            if terminal:
+                delta = reward
+            else:
+                action_prime = learner.choose_action(state_prime, env.action_space)
+                delta = reward + gamma * learner.win_rate(state_prime, action_prime) - learner.win_rate(state, action)
             e_table[state][action] = e_table[state][action] + 1
             for s in range(env.number_states):
                 for a in range(env.number_actions):
                     alpha = 1.0 / learner.n_table[s] if learner.n_table[s] != 0 else 0
                     learner.q_table[s][a] += alpha * delta * e_table[s][a]
                     e_table[s][a] = gamma * lamda * e_table[s][a]
-            state = state_prime
-            action = action_prime
+            if not terminal:
+                state = state_prime
+                action = action_prime
     i = 0
     while(True):
         if (i > 0 and i % 10000 == 0):
