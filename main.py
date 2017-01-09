@@ -93,7 +93,7 @@ def easy21_with_sara_lambda():
             learner.n_table[state] += 1
             delta = 0.0
             if terminal:
-                delta = reward
+                delta = reward - learner.win_rate(state, action)
             else:
                 action_prime = learner.choose_action(state_prime, env.action_space)
                 delta = reward + gamma * learner.win_rate(state_prime, action_prime) - learner.win_rate(state, action)
@@ -108,7 +108,7 @@ def easy21_with_sara_lambda():
                 action = action_prime
     i = 0
     while(True):
-        if (i > 0 and i % 10000 == 0):
+        if (i > 0 and i % 1000 == 0):
             draw_dragram(learner, env)
         play_and_train_game(0.1)
         i = i + 1
