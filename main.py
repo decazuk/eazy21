@@ -4,6 +4,7 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from monte_carlo_learner import * 
+from sarsa_lambda_learner import * 
 
 def draw_dragram(learner, env):
     x = []
@@ -62,10 +63,10 @@ def easy21_with_sara_lambda():
 if __name__ == "__main__":
     env = Easy21Env()
     learner = QLearner(num_states = env.number_states, num_actions = env.number_actions)
-    mc = MonteCarloLearner(env, learner)
+    saras = SarsaLambdaLearner(env, learner)
     i = 0
     while (True):
         if (i > 0 and i % 1000 == 0):
-            draw_dragram(mc.learner, env)
-        mc.train_learner()
+            draw_dragram(saras.learner, env)
+        saras.train_learner()
         i = i + 1
