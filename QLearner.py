@@ -26,12 +26,6 @@ class QLearner(object):
         random_rate = float(N0) / (N0 + self.n_table[state])
         return (1 - random_rate) <= np.random.uniform(0, 1)
 
-    def update_table(self, state, action, reward):
-        original_count = self.n_table[state]
-        self.n_table[state] = original_count + 1
-        original_reward = self.q_table[state][action]
-        self.q_table[state][action] = (original_reward * original_count + reward) / (original_count + 1)
-
     def max_win_rate(self, state):
         return np.amax(self.q_table[state])
 

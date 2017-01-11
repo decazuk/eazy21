@@ -3,24 +3,7 @@ from QLearner import *
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-
-def easy21_with_monte_carlo():
-    env = Easy21Env()
-    learner = QLearner(num_states = env.number_states, num_actions = env.number_actions)
-    learner.reset_tables()
-    def play_and_train_game():    
-        state, terminal, reward = env.init_game()
-        while(not terminal):
-            action = learner.choose_action(state, env.action_space)
-            state_prime, terminal, reward = env.step(state, action)
-            learner.update_table(state, action, reward)
-            state = state_prime
-    i = 0
-    while(True):
-        if (i > 0 and i % 10000 == 0):
-            draw_dragram(learner, env)
-        play_and_train_game()
-        i = i + 1
+from monte_carlo_learner import * 
 
 def draw_dragram(learner, env):
     x = []
@@ -77,4 +60,12 @@ def easy21_with_sara_lambda():
 
 
 if __name__ == "__main__":
-    easy21_with_sara_lambda()
+    env = Easy21Env()
+    learner = QLearner(num_states = env.number_states, num_actions = env.number_actions)
+    mc = MonteCarloLearner(env, learner)
+    i = 0
+    while (True):
+        if (i > 0 and i % 1000 == 0):
+            draw_dragram(mc.learner, env)
+        mc.train_learner()
+        i = i + 1
