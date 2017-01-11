@@ -1,4 +1,4 @@
-from QLearner import *
+from qlearner import *
 
 class MonteCarloLearner(object):
     def __init__(self, env, learner):
