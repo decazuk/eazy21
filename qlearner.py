@@ -31,3 +31,11 @@ class QLearner(object):
 
     def win_rate(self, state, action):
         return self.q_table[state][action]
+
+    def numpy_values_array(self):
+        values = np.zeros(self.num_states * self.num_actions)
+        for s in range(self.num_states):
+            for a in range(self.num_actions):
+                values[s * self.num_actions + a] = self.q_table[s][a]
+        return values
+

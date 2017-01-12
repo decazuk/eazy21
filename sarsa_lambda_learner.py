@@ -1,13 +1,13 @@
 from qlearner import *
 
 class SarsaLambdaLearner(object):
-    def __init__(self, env, learner):
+    def __init__(self, env, learner, lamda = 0.5):
         self.env = env
         self.learner = learner
         self.learner.reset_tables()
         self.e_table = {}
         self.gamma = 1.0
-        self.lamda = 0.5
+        self.lamda = lamda
     def train_learner(self):
         self.reset_etable()
         state, terminal, reward = self.env.init_game()
