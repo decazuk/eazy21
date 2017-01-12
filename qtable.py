@@ -1,6 +1,6 @@
 import numpy as np
 import random
-class QLearner(object):
+class QTable(object):
     def __init__(self, num_states, num_actions):
         self.num_states = num_states
         self.num_actions = num_actions

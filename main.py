@@ -24,8 +24,8 @@ def draw_dragram(learner, env):
 
 def train_q_star_with_monte_carlo_learner():
     env = Easy21Env()
-    table = QLearner(num_states = env.number_states, num_actions = env.number_actions)
-    learner = MonteCarloLearner(env = env, learner = table)
+    table = QTable(num_states = env.number_states, num_actions = env.number_actions)
+    learner = MonteCarloLearner(env = env, table = table)
     i = 0
     while (i < 1000000):
         learner.train_learner()
@@ -35,16 +35,16 @@ def train_q_star_with_monte_carlo_learner():
 
 def train_q_with_sarsa_lambda(lamda):
     env = Easy21Env()
-    table = QLearner(num_states = env.number_states, num_actions = env.number_actions)
+    table = QTable(num_states = env.number_states, num_actions = env.number_actions)
     q_star_table = pickle.load(open('mc_q_star.p', 'rb'))
     np_star = q_star_table.numpy_values_array()
-    learner = SarsaLambdaLearner(env = env, learner = table, lamda = lamda)
+    learner = SarsaLambdaLearner(env = env, table = table, lamda = lamda)
     i = 0
     learning_curve = []
     while (i < 500000):
         learner.train_learner()
         if (i > 0 and i % 1000 == 0):
-            np_sarsa = learner.learner.numpy_values_array()
+            np_sarsa = learner.table.numpy_values_array()
             mean_squared_error = ((np_star - np_sarsa) ** 2).mean()
             learning_curve.append(mean_squared_error)
             print(mean_squared_error)
@@ -52,6 +52,7 @@ def train_q_with_sarsa_lambda(lamda):
     return learning_curve
 
 if __name__ == "__main__":
+    # train_q_star_with_monte_carlo_learner()
     learning_curve1 = train_q_with_sarsa_lambda(0)
     pickle.dump(learning_curve1, open('lambda0learning_curve', 'wb'))
     learning_curve2 = train_q_with_sarsa_lambda(1)
